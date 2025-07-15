@@ -1,4 +1,4 @@
-package com.itau.desafio.api_transacoes;
+package com.itau.desafio.apitransacoes;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

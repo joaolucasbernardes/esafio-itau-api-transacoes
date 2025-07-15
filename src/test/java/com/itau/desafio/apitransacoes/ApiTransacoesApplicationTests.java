@@ -1,4 +1,4 @@
-package com.itau.desafio.api_transacoes;
+package com.itau.desafio.apitransacoes;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
