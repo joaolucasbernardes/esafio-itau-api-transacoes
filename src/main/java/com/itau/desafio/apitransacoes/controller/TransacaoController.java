@@ -13,7 +13,6 @@ public class TransacaoController {
 
     private final TransacaoService transacaoService;
 
-    // Injeção de dependência via construtor
     public TransacaoController(TransacaoService transacaoService) {
         this.transacaoService = transacaoService;
     }
@@ -22,5 +21,11 @@ public class TransacaoController {
     public ResponseEntity<Void> registrarTransacao(@RequestBody @Valid Transacao transacao) {
         transacaoService.salvar(transacao);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deletarTransacoes() {
+        transacaoService.deletarTodas();
+        return ResponseEntity.ok().build();
     }
 }
