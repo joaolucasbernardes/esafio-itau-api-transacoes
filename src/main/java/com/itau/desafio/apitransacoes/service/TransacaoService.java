@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -25,6 +26,11 @@ public class TransacaoService {
     private int janelaEmSegundos;
 
     private final List<Transacao> transacoes = new CopyOnWriteArrayList<>();
+    private final Clock clock;
+
+    public TransacaoService(Clock clock) {
+        this.clock = clock;
+    }
 
     public void salvar(Transacao transacao) {
         transacoes.add(transacao);
@@ -38,7 +44,7 @@ public class TransacaoService {
 
     public Estatistica getEstatisticas() {
         logger.info("Iniciando cálculo de estatísticas para os últimos {} segundos...", janelaEmSegundos);
-        OffsetDateTime agora = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime agora = OffsetDateTime.now(clock);
         OffsetDateTime limite = agora.minusSeconds(janelaEmSegundos);
 
         List<BigDecimal> valoresRecentes = transacoes.stream()
