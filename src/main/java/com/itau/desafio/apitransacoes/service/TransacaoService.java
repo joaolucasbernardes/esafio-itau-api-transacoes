@@ -2,6 +2,7 @@ package com.itau.desafio.apitransacoes.service;
 
 import com.itau.desafio.apitransacoes.model.Estatistica;
 import com.itau.desafio.apitransacoes.model.Transacao;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -20,6 +21,9 @@ public class TransacaoService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransacaoService.class);
 
+    @Value("${desafio.estatisticas.janela-em-segundos}")
+    private int janelaEmSegundos;
+
     private final List<Transacao> transacoes = new CopyOnWriteArrayList<>();
 
     public void salvar(Transacao transacao) {
@@ -33,9 +37,9 @@ public class TransacaoService {
     }
 
     public Estatistica getEstatisticas() {
-        logger.info("Iniciando cálculo de estatísticas...");
+        logger.info("Iniciando cálculo de estatísticas para os últimos {} segundos...", janelaEmSegundos);
         OffsetDateTime agora = OffsetDateTime.now(ZoneOffset.UTC);
-        OffsetDateTime limite = agora.minusSeconds(60);
+        OffsetDateTime limite = agora.minusSeconds(janelaEmSegundos);
 
         List<BigDecimal> valoresRecentes = transacoes.stream()
                 .filter(t -> !t.dataHora().isBefore(limite) && t.dataHora().isBefore(agora))
@@ -43,7 +47,7 @@ public class TransacaoService {
                 .collect(Collectors.toList());
 
         if (valoresRecentes.isEmpty()) {
-            logger.info("Nenhuma transação encontrada nos últimos 60 segundos. Retornando estatísticas zeradas.");
+            logger.info("Nenhuma transação encontrada nos últimos {} segundos. Retornando estatísticas zeradas.", janelaEmSegundos);
             return new Estatistica(0L, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         }
 
